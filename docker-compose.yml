@@ -1,0 +1,33 @@
+services:
+  dashboard:
+    build: .
+    container_name: zikit-dashboard
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data:/app/data:ro
+      - ./outputs:/app/outputs
+      - ./src:/app/src
+    command: ["python", "-m", "src.main", "serve", "--host", "0.0.0.0", "--port", "8000"]
+    restart: unless-stopped
+
+  benchmark:
+    build: .
+    container_name: zikit-benchmark
+    volumes:
+      - ./data:/app/data:ro
+      - ./outputs:/app/outputs
+      - ./src:/app/src
+    command: ["python", "-m", "src.main", "benchmark", "--corridas", "1-10"]
+    profiles: ["tools"]
+
+  predict:
+    build: .
+    container_name: zikit-predict
+    volumes:
+      - ./data:/app/data:ro
+      - ./outputs:/app/outputs
+      - ./src:/app/src
+    command: ["python", "-m", "src.main", "predict", "--corridas", "11-54", "--output", "outputs/alertas.csv"]
+    profiles: ["tools"]
+
